@@ -36,3 +36,6 @@ build/
 # Vagrant temporal files
 **/.vagrant/**
 **.vdi
+
+# Amazon credentials
+aws.properties

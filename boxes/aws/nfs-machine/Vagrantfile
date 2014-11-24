@@ -1,0 +1,60 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+require "yaml"
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+	props = YAML.load_file("box.properties")
+	aws_props = YAML.load_file("aws.properties")
+
+	config.vm.box = "#{props['box']['name']}"
+	config.vm.box_url = "file://#{props['box']['base_location']}"
+
+	config.vm.provider :aws do |aws, override|
+		aws.access_key_id = "#{aws_props['keys']['access_key_id']}"
+		aws.secret_access_key = "#{aws_props['keys']['secret_access_key']}"
+		aws.keypair_name = "jeqo"
+
+		aws.instance_type = "t2.micro"
+		aws.region = "sa-east-1"
+		aws.availability_zone = "sa-east-1a"
+		aws.ami = "ami-8737829a"
+
+		override.ssh.username = "ec2-user"
+		override.ssh.private_key_path = "#{aws_props['keys']['key_pair_location']}"
+
+		aws.tags = {
+		  'Name' => "#{props['box']['name']}"
+		}
+
+		aws.block_device_mapping = [{
+			'DeviceName' => '/dev/sda1',
+			'Ebs.VolumeSize' => props['box']['disk_size']
+		}]
+
+		aws.security_groups = "nfs-group"
+
+		config.ssh.pty = true
+	end
+
+	config.omnibus.chef_version = :latest
+
+	# config.vm.provision "shell" do |s|
+	# s.path	= "mount_nfs.sh"
+	# s.args	= "#{props['aws']['nfs_server']}"
+	# end
+
+	config.vm.provision "shell" do |s|
+		s.path	= "increase_swap.sh"
+	end
+
+	config.vm.provision "chef_client" do |chef|
+		chef.chef_server_url = "https://api.opscode.com/organizations/jeqo"
+		chef.validation_client_name = "jeqo-validator"
+		chef.validation_key_path = "#{props['chef']['repo_location']}/.chef/jeqo-validator.pem"
+		chef.node_name = "#{props['box']['name']}"
+		chef.add_role "nfs-server"
+		chef.environment = "development"
+	end
+end

@@ -45,6 +45,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.provision "chef_solo" do |chef|
     chef.cookbooks_path = "#{props['chef_repo']['location']}/cookbooks"
     chef.roles_path = "#{props['chef_repo']['location']}/roles"
-    # chef.add_role "nfs-server"
+    chef.add_role "nfs-client"
   end
 end
