@@ -1,0 +1,50 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+require "yaml"
+
+VAGRANTFILE_API_VERSION = "2"
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  props = YAML.load_file("box.properties")
+  disk_location = "#{props['box']['disk_location']}"
+
+  config.vm.box = "#{props['box']['name']}"
+  config.vm.box_url = "#{props['box']['url']}"
+  config.vm.hostname = "#{props['box']['name']}"
+  config.vm.synced_folder "#{props['box']['data_directory']}" , "/data", :mount_options => ["dmode=777", "fmode=777"]
+  config.vm.network :private_network, ip: "#{props['box']['ip']}"
+
+  config.vm.provider :virtualbox do |vb|
+    vb.customize ["modifyvm", :id, "--memory", "#{props['box']['ram']}"]
+    vb.customize ["modifyvm", :id, "--name"  , "#{props['box']['name']}"]
+    vb.customize ["modifyvm", :id, "--cpus"  , props['box']['cpus']]
+    vb.customize ["modifyvm", :id, "--chipset", "ich9"]
+
+    if ARGV[0] == "up" && ! File.exist?(disk_location)
+      vb.customize [
+        'createhd',
+        '--filename', disk_location,
+        '--format', 'VDI',
+        '--size', props['box']['additional_disk_size'] * 1024
+      ]
+      vb.customize [
+        'storageattach', :id,
+        '--storagectl', 'SATA Controller',
+        '--port', 1, '--device', 0,
+        '--type', 'hdd', '--medium',
+        disk_location
+      ]
+    end
+  end
+
+  if ARGV[0] == "up" && ! File.exist?(disk_location)
+    config.vm.provision "shell", path: "bootstrap.sh"
+    config.vm.provision "shell", path: "increase_swap.sh"
+  end
+
+  config.vm.provision "chef_solo" do |chef|
+    chef.cookbooks_path = "#{props['chef_repo']['location']}/cookbooks"
+    chef.roles_path = "#{props['chef_repo']['location']}/roles"
+    chef.add_role "nfs-server"
+  end
+end
