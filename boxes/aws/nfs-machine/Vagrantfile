@@ -17,11 +17,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 		aws.keypair_name = "jeqo"
 
 		aws.instance_type = "t2.micro"
-		aws.region = "sa-east-1"
-		aws.availability_zone = "sa-east-1a"
-		aws.ami = "ami-8737829a"
+		aws.region = "us-east-1"
+		aws.availability_zone = "us-east-1a"
+		aws.ami = "ami-9eaa1cf6"
 
-		override.ssh.username = "ec2-user"
+		override.ssh.username = "ubuntu"
 		override.ssh.private_key_path = "#{aws_props['keys']['key_pair_location']}"
 
 		aws.tags = {
@@ -55,6 +55,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 		chef.validation_key_path = "#{props['chef']['repo_location']}/.chef/jeqo-validator.pem"
 		chef.node_name = "#{props['box']['name']}"
 		chef.add_role "nfs-server"
-		chef.environment = "development"
+		# chef.environment = "development"
 	end
 end
