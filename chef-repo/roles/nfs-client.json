@@ -1,0 +1,13 @@
+{
+  "name" : "nfs-client",
+  "description" : "Role applied to the system that should be an NFS client tools.",
+  "json_class" : "Chef::Role",
+  "default_attributes" : {
+    "nfs-client" : {
+      "server-host" : "54.173.35.54"
+    }
+  },
+  "run_list" : [
+    "recipe[nfs-utils::nfs-client]"
+  ]
+}
