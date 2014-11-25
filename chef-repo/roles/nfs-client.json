@@ -5,7 +5,7 @@
   "default_attributes" : {
     "nfs-client" : {
       "server-host" : "54.173.35.54",
-      "local-directory" : "/data"
+      "local-directory" : "/data",
       "remote-directory" : "/data"
     }
   },
