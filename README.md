@@ -134,3 +134,5 @@ It's important to follow [these recommendations](https://theredblacktree.wordpre
 You can check how to use it in this video:
 
 TODO: upload youtube video
+
+> **Note**: If you want to test locally, you need to download [this box](https://oss-binaries.phusionpassenger.com/vagrant/boxes/latest/ubuntu-14.04-amd64-vbox.box) for NFS Server (Ubuntu) and [this one](https://storage.us2.oraclecloud.com/v1/istoilis-istoilis/vagrant/oel65-64.box) for NFS Client (Oracle Linux) and change box url on *box.properties* file.
