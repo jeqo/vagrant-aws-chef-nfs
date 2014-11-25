@@ -40,11 +40,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
 	config.omnibus.chef_version = :latest
 
-	# config.vm.provision "shell" do |s|
-	# s.path	= "mount_nfs.sh"
-	# s.args	= "#{props['aws']['nfs_server']}"
-	# end
-
 	config.vm.provision "shell" do |s|
 		s.path	= "increase_swap.sh"
 	end
@@ -55,6 +50,5 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 		chef.validation_key_path = "#{props['chef']['repo_location']}/.chef/jeqo-validator.pem"
 		chef.node_name = "#{props['box']['name']}"
 		chef.add_role "nfs-server"
-		# chef.environment = "development"
 	end
 end
