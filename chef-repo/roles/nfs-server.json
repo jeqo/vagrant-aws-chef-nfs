@@ -15,6 +15,9 @@
         "mountd" : 32767,
         "lockd" : 32768
       }
+    },
+    "nfs-server" : {
+      "shared-directory" : "/data"
     }
   },
   "run_list" : [

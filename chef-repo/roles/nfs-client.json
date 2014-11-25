@@ -4,7 +4,9 @@
   "json_class" : "Chef::Role",
   "default_attributes" : {
     "nfs-client" : {
-      "server-host" : "54.173.35.54"
+      "server-host" : "54.173.35.54",
+      "local-directory" : "/data"
+      "remote-directory" : "/data"
     }
   },
   "run_list" : [
